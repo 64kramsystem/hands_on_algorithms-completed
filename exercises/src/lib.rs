@@ -11,3 +11,4 @@ pub mod d2_1_bubble_sort;
 pub mod d2_2_merge_sort;
 pub mod d2_2_merge_sort_source;
 pub mod d2_3_quicksort;
+pub mod d2_4_dynamic_programming;
