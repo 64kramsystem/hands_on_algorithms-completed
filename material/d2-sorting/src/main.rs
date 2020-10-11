@@ -1,7 +1,7 @@
 mod b_rand;
 
 fn main() {
-    let mut v = vec![1, 34, 6, 12, 8, 100, 320, 66, 90, 2000, 45, 65, 120];
+    let v = vec![1, 34, 6, 12, 8, 100, 320, 66, 90, 2000, 45, 65, 120];
 
     println!("v = {:?}", v);
 
@@ -114,7 +114,7 @@ pub fn quick_sort<T: PartialOrd + std::fmt::Debug>(v: &mut [T]) {
     quick_sort(&mut b[1..]);
 }
 
-struct RawSend<'a, T>(&'a [T]);
+pub struct RawSend<'a, T>(&'a [T]);
 
 unsafe impl<'a, T> Send for RawSend<'a, T> {}
 /*
