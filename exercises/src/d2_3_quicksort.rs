@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use rand::Rng;
 
 // Iterating the collection using a chosen pivot, and move the lower elements to its left, and the
 // higher to its right. Since we can't move blocks of elements, when we find an element that it's
@@ -7,6 +7,11 @@ use std::fmt::Debug;
 // higher than p values are always to its right.
 
 pub fn pivot<T: PartialOrd>(collection: &mut [T]) -> usize {
+    // Optimization: use a random element as pivot
+    //
+    let r = rand::thread_rng().gen_range(0, collection.len());
+    collection.swap(r, 0);
+
     let mut p = 0;
 
     for i in 1..collection.len() {
@@ -36,6 +41,44 @@ pub fn quicksort<T: PartialOrd>(collection: &mut [T]) {
 
     quicksort(collection_1);
     quicksort(&mut collection_2[1..]);
+}
+
+// Complexity require to make a parallel implementation, due to lifetimes.
+// To make this trivial, use Rayon or Crossbeam.
+//
+pub struct RawSend<T>(*mut [T]);
+unsafe impl<T> Send for RawSend<T> {}
+
+pub fn threaded_quicksort<T: 'static + PartialOrd + Send>(collection: &mut [T]) {
+    if collection.len() <= 1 {
+        return;
+    }
+
+    let p = pivot(collection);
+
+    let (collection_1, collection_2) = collection.split_at_mut(p);
+
+    let collection_1 = collection_1 as *mut [T];
+    let collection_1 = RawSend(collection_1);
+
+    unsafe {
+        let thread = std::thread::spawn(move || {
+            threaded_quicksort(&mut *collection_1.0);
+        });
+        threaded_quicksort(&mut collection_2[1..]);
+
+        thread.join().ok();
+    }
+}
+
+// Base random generator; on each iteration, the formula is `curr = (current * multiplier + increment) % modulo;`
+// Number should be prime-ish and large.
+//
+pub struct RandGen {
+    pub current: usize,
+    pub multiplier: usize,
+    pub increment: usize,
+    pub modulo: usize,
 }
 
 #[cfg(test)]
@@ -70,4 +113,10 @@ mod tests {
     }
 
     test_sort!(test_quicksort, collection, quicksort(&mut collection));
+
+    test_sort!(
+        test_threaded_quicksort,
+        collection,
+        threaded_quicksort(&mut collection)
+    );
 }

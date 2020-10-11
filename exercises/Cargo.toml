@@ -5,3 +5,4 @@ name = "hands_on_algos"
 version = "0.1.0"
 
 [dependencies]
+rand = "0.7.3"
