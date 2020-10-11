@@ -16,7 +16,7 @@ fn main() {
     std::thread::spawn(move || {
         let stdin = std::io::stdin();
         for k in stdin.keys() {
-            ch_s.send(k);
+            ch_s.send(k).unwrap();
         }
     });
     let (w, h) = termion::terminal_size().unwrap();
@@ -48,10 +48,10 @@ fn main() {
         systems::death_sys(&mut gen, &mut strengths, &mut poss, &mut dirs);
         systems::render_sys(&mut screen, &poss, &strengths);
 
-        write!(&mut screen, "{}PASS={}", termion::cursor::Goto(1, 1), pass);
+        write!(&mut screen, "{}PASS={}", termion::cursor::Goto(1, 1), pass).unwrap();
         pass += 1;
 
-        screen.flush();
+        screen.flush().unwrap();
 
         std::thread::sleep(std::time::Duration::from_millis(300));
 

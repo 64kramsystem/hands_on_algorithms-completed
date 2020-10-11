@@ -86,7 +86,7 @@ pub fn render_sys<T: std::io::Write, P: EcsStore<Pos>, S: EcsStore<Strength>>(
     pp: &P,
     ss: &S,
 ) {
-    write!(t, "{}", termion::clear::All);
+    write!(t, "{}", termion::clear::All).unwrap();
     let (w, h) = termion::terminal_size().unwrap();
     pp.for_each(|g, p| {
         if let Some(st) = ss.get(g) {
@@ -99,7 +99,7 @@ pub fn render_sys<T: std::io::Write, P: EcsStore<Pos>, S: EcsStore<Strength>>(
             };
             let x = (p.x % (w as i32)) + 1;
             let y = (p.y % (h as i32)) + 1;
-            write!(t, "{}{}{}", cursor::Goto(x as u16, y as u16), col, st.s);
+            write!(t, "{}{}{}", cursor::Goto(x as u16, y as u16), col, st.s).unwrap();
         }
     });
 }
