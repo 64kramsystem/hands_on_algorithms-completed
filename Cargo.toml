@@ -1,0 +1,10 @@
+[workspace]
+members = [
+  "exercises",
+  "material/d2-sorting",
+  "material/d3-linklists",
+  "material/d4-graphs",
+  "material/d5-hashmap",
+  "material/d6-ecs",
+  "material/d7-persist",
+]
