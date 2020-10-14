@@ -2,6 +2,9 @@
 // macro.
 //
 #![allow(unused_imports)]
+// For convenience. Some methods aren't worth testing, because they're a copy of the course.
+//
+#![allow(dead_code)]
 
 mod helpers;
 
@@ -12,3 +15,4 @@ pub mod d2_2_merge_sort;
 pub mod d2_2_merge_sort_source;
 pub mod d2_3_quicksort;
 pub mod d2_4_dynamic_programming;
+pub mod d3_1_linked_list;
