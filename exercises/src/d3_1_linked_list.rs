@@ -30,6 +30,30 @@ impl<T: PartialOrd + Copy> LinkedList<T> {
         }
     }
 
+    // Exercise
+    //
+    fn sorted_push_iterative(&mut self, value: T) {
+        let mut current = self;
+
+        loop {
+            // The split `Some` arms are required due to limitations of the BCK; with Polonius, the
+            // code works with a single `Some` arm.
+            //
+            match current.0 {
+                Some((ref current_value, _)) if *current_value > value => {
+                    break;
+                }
+                Some((_, ref mut child)) => {
+                    current = child;
+                }
+                _ => {
+                    break;
+                }
+            }
+        }
+        current.push_front(value);
+    }
+
     pub fn values(&self) -> Vec<T> {
         let mut values = vec![];
 
@@ -62,5 +86,24 @@ mod tests {
         }
 
         assert_eq!(list.values()[..], values[..]);
+    }
+
+    #[test]
+    fn sorted_insert() {
+        let values = vec![
+            1273, 18273, 8273, 827, 11, 213, 9172397, 2373, 2, 4, 20983, 29831093, 287, 2837, 11,
+            92900,
+        ];
+
+        let mut sorted_values = values.clone();
+        sorted_values.sort();
+
+        let mut list = LinkedList::new();
+
+        for value in values {
+            list.sorted_push_iterative(value);
+        }
+
+        assert_eq!(list.values()[..], sorted_values[..]);
     }
 }
