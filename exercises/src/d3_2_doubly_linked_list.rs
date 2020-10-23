@@ -28,9 +28,35 @@ impl<T: Copy> LinkedList<T> {
 
             current_front.borrow_mut().previous = Some(Rc::downgrade(&node));
 
-            let new_front = node;
+            // Alternative: `*current_front = node;`
+            //
+            self.0 = Some((node, current_back.clone()));
+        } else {
+            let node = Rc::new(RefCell::new(Node {
+                value,
+                next: None,
+                previous: None,
+            }));
 
-            self.0 = Some((new_front, current_back.clone()));
+            let front = node;
+            let back = Rc::downgrade(&front);
+
+            self.0 = Some((front, back));
+        }
+    }
+
+    fn push_back(&mut self, value: T) {
+        if let Some((ref mut current_front_rc, ref mut current_back_wk)) = self.0 {
+            let node = Rc::new(RefCell::new(Node {
+                value,
+                next: None,
+                previous: Some(current_back_wk.clone()),
+            }));
+
+            let current_back_rc = Weak::upgrade(current_back_wk).unwrap();
+            current_back_rc.borrow_mut().next = Some(node.clone());
+
+            *current_back_wk = Rc::downgrade(&node);
         } else {
             let node = Rc::new(RefCell::new(Node {
                 value,
@@ -71,6 +97,10 @@ impl<T: Copy> LinkedList<T> {
 mod tests {
     use super::*;
 
+    // LinkedList#values() starts from the front reference, so we may also test the back reference.
+    // The tests are incomplete - values() goes only in one direction, so the `previous` reference is
+    // not tested; since this is an exercise, thorough testing is not expected.
+
     #[test]
     fn test_push_front() {
         let values = vec![1273, 18273, 8273, 827, 92900];
@@ -82,5 +112,30 @@ mod tests {
         }
 
         assert_eq!(list.values()[..], values[..]);
+
+        let (_, ref list_back) = list.0.unwrap();
+
+        let list_back_value = Weak::upgrade(list_back).unwrap().borrow().value;
+
+        assert_eq!(list_back_value, *values.last().unwrap());
+    }
+
+    #[test]
+    fn test_push_back() {
+        let values = vec![1273, 18273, 8273, 827, 92900];
+
+        let mut list = LinkedList::new();
+
+        for value in &values {
+            list.push_back(*value);
+        }
+
+        assert_eq!(list.values()[..], values[..]);
+
+        let (_, ref list_back) = list.0.unwrap();
+
+        let list_back_value = Weak::upgrade(list_back).unwrap().borrow().value;
+
+        assert_eq!(list_back_value, *values.last().unwrap());
     }
 }
