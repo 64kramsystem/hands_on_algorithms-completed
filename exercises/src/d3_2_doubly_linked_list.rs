@@ -115,17 +115,21 @@ impl<T: Copy> LinkedList<T> {
         let mut values = vec![];
 
         if let Some((ref front, _)) = self.0 {
-            let mut current_opt = Some(Rc::clone(front));
+            let mut current = Rc::clone(front);
 
-            // See https://stackoverflow.com/questions/36597987/cyclic-reference-of-refcell-borrows-in-traversal
-            //
-            while let Some(current) = current_opt {
-                let current_node = current.borrow();
-
-                let current_value = current_node.value;
+            loop {
+                let current_value = current.borrow().value;
                 values.push(current_value);
 
-                current_opt = current_node.next.clone();
+                let current_rc = current.borrow();
+
+                let next = if let Some(ref next) = current_rc.next {
+                    Rc::clone(next)
+                } else {
+                    break;
+                };
+
+                current = next;
             }
         }
 
