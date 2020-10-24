@@ -22,7 +22,7 @@ impl<T: Copy> LinkedList<T> {
         if let Some((ref mut current_front, ref mut current_back)) = self.0 {
             let node = Rc::new(RefCell::new(Node {
                 value,
-                next: Some(current_front.clone()),
+                next: Some(Rc::clone(current_front)),
                 previous: None,
             }));
 
@@ -30,7 +30,7 @@ impl<T: Copy> LinkedList<T> {
 
             // Alternative: `*current_front = node;`
             //
-            self.0 = Some((node, current_back.clone()));
+            self.0 = Some((node, Weak::clone(current_back)));
         } else {
             let node = Rc::new(RefCell::new(Node {
                 value,
@@ -50,11 +50,11 @@ impl<T: Copy> LinkedList<T> {
             let node = Rc::new(RefCell::new(Node {
                 value,
                 next: None,
-                previous: Some(current_back_wk.clone()),
+                previous: Some(Weak::clone(current_back_wk)),
             }));
 
             let current_back_rc = Weak::upgrade(current_back_wk).unwrap();
-            current_back_rc.borrow_mut().next = Some(node.clone());
+            current_back_rc.borrow_mut().next = Some(Rc::clone(&node));
 
             *current_back_wk = Rc::downgrade(&node);
         } else {
@@ -115,7 +115,7 @@ impl<T: Copy> LinkedList<T> {
         let mut values = vec![];
 
         if let Some((ref front, _)) = self.0 {
-            let mut current_opt = Some(front.clone());
+            let mut current_opt = Some(Rc::clone(front));
 
             // See https://stackoverflow.com/questions/36597987/cyclic-reference-of-refcell-borrows-in-traversal
             //
