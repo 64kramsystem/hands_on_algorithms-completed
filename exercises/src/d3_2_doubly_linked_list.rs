@@ -90,6 +90,27 @@ impl<T: Copy> LinkedList<T> {
         }
     }
 
+    fn pop_back(&mut self) -> Option<T> {
+        if let Some((ref mut current_front_rc, ref mut current_back_wk)) = self.0 {
+            let current_back_rc = Weak::upgrade(current_back_wk).unwrap();
+            let popped_value = current_back_rc.borrow().value;
+
+            let new_ends = if let Some(ref mut parent_wk) = current_back_rc.borrow_mut().previous {
+                let parent_rc = Weak::upgrade(parent_wk).unwrap();
+                parent_rc.borrow_mut().next = None;
+                Some((Rc::clone(current_front_rc), Weak::clone(parent_wk)))
+            } else {
+                None
+            };
+
+            self.0 = new_ends;
+
+            Some(popped_value)
+        } else {
+            None
+        }
+    }
+
     pub fn values(&self) -> Vec<T> {
         let mut values = vec![];
 
@@ -175,5 +196,24 @@ mod tests {
         }
 
         assert!(list.pop_front().is_none());
+    }
+
+    #[test]
+    fn test_pop_back() {
+        let values = vec![1273, 18273, 8273, 827, 92900];
+
+        let mut list = LinkedList::new();
+
+        for value in &values {
+            list.push_back(*value);
+        }
+
+        for value in values.iter().rev() {
+            let popped_value = list.pop_back();
+
+            assert_eq!(popped_value.unwrap(), *value);
+        }
+
+        assert!(list.pop_back().is_none());
     }
 }
