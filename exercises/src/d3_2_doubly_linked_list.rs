@@ -121,9 +121,7 @@ impl<T: Copy> LinkedList<T> {
                 let current_value = current.borrow().value;
                 values.push(current_value);
 
-                let current_rc = current.borrow();
-
-                let next = if let Some(ref next) = current_rc.next {
+                let next = if let Some(ref next) = current.borrow().next {
                     Rc::clone(next)
                 } else {
                     break;
