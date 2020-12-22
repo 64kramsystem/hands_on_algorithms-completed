@@ -51,11 +51,28 @@ impl<T: PartialOrd + Copy> BinaryTree<T> {
     }
 }
 
+impl<T: PartialOrd + Display> BinaryTree<T> {
+    pub fn print_lfirst(&self, depth: usize, buffer: String) -> String {
+        if let Some(node) = &self.node {
+            let mut buffer = node.left.print_lfirst(depth + 1, buffer);
+
+            buffer.push_str(&format!("{}{}\n", &".".repeat(depth), node.data));
+
+            let buffer = node.right.print_lfirst(depth + 1, buffer);
+
+            buffer
+        } else {
+            buffer
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::fmt::Binary;
 
     use super::*;
+    use indoc::indoc;
 
     fn test_tree() -> BinaryTree<i32> {
         let mut tree = BinaryTree::new();
@@ -80,5 +97,24 @@ mod tests {
         let expected_values = [1, 3, 4, 5, 6, 10, 54, 94];
 
         assert_eq!(actual_values, expected_values);
+    }
+
+    #[test]
+    fn test_print() {
+        let tree = test_tree();
+
+        let actual_representation = tree.print_lfirst(0, String::new());
+        let expected_representation = indoc! {"
+            .1
+            ..3
+            4
+            .5
+            ..6
+            ...10
+            .....54
+            ....94
+        "};
+
+        assert_eq!(actual_representation, expected_representation);
     }
 }
