@@ -50,13 +50,22 @@ impl<T: PartialOrd> BinaryTree<T> {
     }
 }
 
-impl<T: PartialOrd + Copy> BinaryTree<T> {
+impl<T: PartialOrd> BinaryTree<T> {
     // Using an owned vector for the result is purely for convenience.
     //
-    pub fn sorted_values(&self, out: Vec<T>) -> Vec<T> {
+    // It's not clear if this lifetimes usage is correct. The idea is that the lifetimes of self and
+    // the vector match.
+    // However, it'd be more correct to specify that the lifetime of self may outlive the vector; this
+    // is possibly expressed by:
+    //
+    //   sorted_values<'a: 'b, 'b>(&'b self, out: Vec<&'a T>) -> Vec<&'a T>
+    //
+    // however, I can't find what's the name of this syntax, and if it expresses what intended.
+    //
+    pub fn sorted_values<'a>(&'a self, out: Vec<&'a T>) -> Vec<&'a T> {
         if let Some(node) = &self.node {
             let mut out = node.left.sorted_values(out);
-            out.push(node.data);
+            out.push(&node.data);
             let out = node.right.sorted_values(out);
 
             out
@@ -158,7 +167,7 @@ mod tests {
         let tree = test_tree();
 
         let actual_values = tree.sorted_values(vec![]);
-        let expected_values = [1, 3, 4, 5, 6, 10, 54, 94];
+        let expected_values = [&1, &3, &4, &5, &6, &10, &54, &94];
 
         assert_eq!(actual_values, expected_values);
     }
