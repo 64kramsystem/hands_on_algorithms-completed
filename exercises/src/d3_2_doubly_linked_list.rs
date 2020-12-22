@@ -1,5 +1,3 @@
-#![allow(unused_variables)]
-
 use std::{cell::RefCell, rc::Rc, rc::Weak};
 
 type StrongNodeRef<T> = Rc<RefCell<Node<T>>>;
@@ -46,7 +44,7 @@ impl<T: Copy> LinkedList<T> {
     }
 
     fn push_back(&mut self, value: T) {
-        if let Some((ref mut current_front_rc, ref mut current_back_wk)) = self.0 {
+        if let Some((_, ref mut current_back_wk)) = self.0 {
             let node = Rc::new(RefCell::new(Node {
                 value,
                 next: None,
