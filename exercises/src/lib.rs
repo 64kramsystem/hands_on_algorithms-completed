@@ -17,3 +17,4 @@ pub mod d2_3_quicksort;
 pub mod d2_4_dynamic_programming;
 pub mod d3_1_linked_list;
 pub mod d3_2_doubly_linked_list;
+pub mod d3_3_binary_tree;
