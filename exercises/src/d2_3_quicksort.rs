@@ -9,7 +9,7 @@ use rand::Rng;
 pub fn pivot<T: PartialOrd>(collection: &mut [T]) -> usize {
     // Optimization: use a random element as pivot
     //
-    let r = rand::thread_rng().gen_range(0, collection.len());
+    let r = rand::thread_rng().gen_range(0..collection.len());
     collection.swap(r, 0);
 
     let mut p = 0;
