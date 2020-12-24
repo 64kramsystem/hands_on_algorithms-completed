@@ -1,7 +1,3 @@
-// For convenience. Some methods aren't worth testing, because they're a copy of the course.
-//
-#![allow(dead_code)]
-
 mod helpers;
 
 // Don't forget to add all the modules, so that the UTs are run.
