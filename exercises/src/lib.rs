@@ -1,7 +1,3 @@
-// Required to avoid warnings; the compiler doesn't recognize the invocation passed to the testing
-// macro.
-//
-#![allow(unused_imports)]
 // For convenience. Some methods aren't worth testing, because they're a copy of the course.
 //
 #![allow(dead_code)]

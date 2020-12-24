@@ -21,8 +21,6 @@ pub fn fibonacci_dynamic(n: u32) -> (u32, u32) {
 
 #[cfg(test)]
 mod tests {
-    use crate::test_sort;
-
     #[test]
     fn test_fibonacci_dynamic() {
         use super::*;

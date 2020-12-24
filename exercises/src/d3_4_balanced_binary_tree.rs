@@ -1,7 +1,4 @@
-use std::{
-    cmp,
-    fmt::{Binary, Display},
-};
+use std::{cmp, fmt::Display};
 
 // The type bounds are implemented only where necessary, with the exception of PartialOrd, which is
 // in the types, because a binary tree contains inherently orderable data.
@@ -142,8 +139,6 @@ impl<T: PartialOrd> BinaryTree<T> {
 
 #[cfg(test)]
 mod tests {
-    use std::fmt::Binary;
-
     use super::*;
     use indoc::indoc;
 

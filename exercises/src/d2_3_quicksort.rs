@@ -83,6 +83,7 @@ pub struct RandGen {
 
 #[cfg(test)]
 mod tests {
+    use super::{quicksort, threaded_quicksort};
     use crate::test_sort;
 
     #[test]
