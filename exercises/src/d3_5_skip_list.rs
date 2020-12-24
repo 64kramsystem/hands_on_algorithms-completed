@@ -6,7 +6,7 @@ use std::{
 
 type Rcc<T> = Rc<RefCell<T>>;
 
-struct Node<T: PartialOrd> {
+pub struct Node<T: PartialOrd> {
     right: Option<Rcc<Node<T>>>,
     down: Option<Rcc<Node<T>>>,
     data: Rc<T>,
@@ -62,7 +62,7 @@ impl<T: PartialOrd> Node<T> {
 }
 
 impl<T: PartialOrd + Display> Node<T> {
-    fn print<U: Write>(&self, mut writer: U) -> U {
+    pub fn print<U: Write>(&self, mut writer: U) -> U {
         write!(writer, " {}", self.data).unwrap();
 
         if let Some(right) = &self.right {

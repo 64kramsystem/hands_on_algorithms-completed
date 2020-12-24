@@ -69,7 +69,7 @@ impl<T: PartialOrd> Node<T> {
 }
 
 impl<T: PartialOrd + Display> Node<T> {
-    fn print_row<U: Write>(&self, mut writer: U) -> U {
+    pub fn print_row<U: Write>(&self, mut writer: U) -> U {
         write!(writer, "{}", self.data).unwrap();
 
         if let Some(right) = &self.right {
@@ -82,7 +82,7 @@ impl<T: PartialOrd + Display> Node<T> {
 }
 
 impl<'a, T: PartialOrd + Display> SkipList<'a, T> {
-    fn print<U: Write>(&self, mut writer: U) -> U {
+    pub fn print<U: Write>(&self, mut writer: U) -> U {
         if self.list.is_empty() {
             write!(writer, "Empty skip list!").unwrap();
             return writer;
