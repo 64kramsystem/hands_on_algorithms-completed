@@ -4,7 +4,7 @@ use std::{
     rc::Rc,
 };
 
-use rand::{rngs::adapter::ReadRng, thread_rng, Rng, RngCore};
+use rand::{thread_rng, Rng, RngCore};
 
 type Rcc<T> = Rc<RefCell<T>>;
 
@@ -155,6 +155,7 @@ impl<'a, T: PartialOrd> SkipList<'a, T> {
 
 #[cfg(test)]
 mod tests {
+    use rand::rngs::adapter::ReadRng;
     use std::io::Read;
 
     use super::*;

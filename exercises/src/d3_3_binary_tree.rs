@@ -71,8 +71,6 @@ impl<T: PartialOrd + Display> BinaryTree<T> {
 
 #[cfg(test)]
 mod tests {
-    use std::fmt::Binary;
-
     use super::*;
     use indoc::indoc;
 

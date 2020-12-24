@@ -1,5 +1,3 @@
-use super::d2_2_merge_sort_source::source_merge_sort;
-
 // Recursively sort the two subcollections (until there is only one element), then sort them by
 // iterating both at the same time, and comparing the elements.
 //
@@ -44,6 +42,8 @@ pub fn merge_sort_improved<T: PartialOrd + Copy>(collection: &[T]) -> Vec<T> {
 
 #[cfg(test)]
 mod tests {
+    use super::merge_sort_improved;
+    use crate::d2_2_merge_sort_source::source_merge_sort;
     use crate::test_sort;
 
     test_sort!(
