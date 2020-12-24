@@ -13,3 +13,4 @@ pub mod d3_3_binary_tree;
 pub mod d3_4_balanced_binary_tree;
 pub mod d3_5_skip_list;
 pub mod d3_6_skip_list_with_height;
+pub mod d3_7_huffman_coding;
