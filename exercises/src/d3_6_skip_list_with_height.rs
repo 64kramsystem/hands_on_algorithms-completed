@@ -4,6 +4,8 @@ use std::{
     rc::Rc,
 };
 
+use rand::{rngs::adapter::ReadRng, thread_rng, Rng, RngCore};
+
 type Rcc<T> = Rc<RefCell<T>>;
 
 struct Node<T: PartialOrd> {
@@ -12,7 +14,8 @@ struct Node<T: PartialOrd> {
     data: Rc<T>,
 }
 
-pub struct SkipList<T: PartialOrd> {
+pub struct SkipList<'a, T: PartialOrd> {
+    rng: Box<dyn RngCore + 'a>,
     list: Vec<Node<T>>,
 }
 
@@ -25,7 +28,7 @@ impl<T: PartialOrd> Node<T> {
         Node { right, down, data }
     }
 
-    pub fn insert(&mut self, data: T) -> Option<Rcc<Node<T>>> {
+    pub fn insert<'a>(&mut self, data: T, rng: &mut Box<dyn RngCore + 'a>) -> Option<Rcc<Node<T>>> {
         // If there is a child on the right, and the data is greater than it, recursively insert on
         // the right.
         //
@@ -33,15 +36,15 @@ impl<T: PartialOrd> Node<T> {
             let mut right = right.borrow_mut();
 
             if data > *right.data {
-                return right.insert(data);
+                return right.insert(data, rng);
             }
         }
 
         if let Some(down) = &self.down {
-            let inserted_node = down.borrow_mut().insert(data);
+            let inserted_node = down.borrow_mut().insert(data, rng);
 
             if let Some(inserted_node) = inserted_node {
-                if rand::random() {
+                if rng.gen() {
                     let data = &inserted_node.borrow().data;
                     let down = Some(Rc::clone(&inserted_node));
 
@@ -78,7 +81,7 @@ impl<T: PartialOrd + Display> Node<T> {
     }
 }
 
-impl<T: PartialOrd + Display> SkipList<T> {
+impl<'a, T: PartialOrd + Display> SkipList<'a, T> {
     fn print<U: Write>(&self, mut writer: U) -> U {
         if self.list.is_empty() {
             write!(writer, "Empty skip list!").unwrap();
@@ -94,9 +97,11 @@ impl<T: PartialOrd + Display> SkipList<T> {
     }
 }
 
-impl<T: PartialOrd> SkipList<T> {
-    pub fn new() -> Self {
-        SkipList { list: vec![] }
+impl<'a, T: PartialOrd> SkipList<'a, T> {
+    pub fn new(rng: Option<Box<dyn RngCore + 'a>>) -> Self {
+        let rng = rng.unwrap_or_else(|| Box::new(thread_rng()));
+
+        SkipList { rng, list: vec![] }
     }
 
     pub fn insert(&mut self, data: T) {
@@ -107,7 +112,7 @@ impl<T: PartialOrd> SkipList<T> {
 
         for (i, node) in self.list.iter_mut().enumerate().rev() {
             if data > *node.data {
-                let inserted_node = node.insert(data);
+                let inserted_node = node.insert(data, &mut self.rng);
 
                 if let Some(inserted_node) = inserted_node {
                     self.loop_up(inserted_node, i + 1)
@@ -123,7 +128,7 @@ impl<T: PartialOrd> SkipList<T> {
     }
 
     fn loop_up(&mut self, down: Rcc<Node<T>>, n: usize) {
-        if rand::random() {
+        if self.rng.gen() {
             return;
         }
 
@@ -150,11 +155,22 @@ impl<T: PartialOrd> SkipList<T> {
 
 #[cfg(test)]
 mod tests {
+    use std::io::Read;
+
     use super::*;
     use indoc::indoc;
 
-    fn test_list() -> SkipList<i32> {
-        let mut list = SkipList::new();
+    fn prepare_random_data(data: &[bool]) -> Vec<u8> {
+        data.iter()
+            .flat_map(|f| vec![0, 0, 0, (*f as u8) << 7])
+            .collect::<Vec<_>>()
+    }
+
+    fn test_list<'a>(random_data: &'a [u8]) -> SkipList<'a, i32> {
+        let random_data_read = Box::new(random_data) as Box<dyn Read>;
+        let rng: Box<dyn RngCore> = Box::new(ReadRng::new(random_data_read));
+
+        let mut list = SkipList::new(Some(rng));
 
         list.insert(4);
         list.insert(6);
@@ -168,26 +184,17 @@ mod tests {
 
     #[test]
     fn test_insert() {
-        let list = test_list();
-
-        // true
-        // false
-        // true
-        // true
-        // false
-        // false
-        // true
-
-        let rand_byte: u8 = rand::random();
+        let random_data = prepare_random_data(&[true, false, true, true, false, false, true]);
+        let list = test_list(random_data.as_slice());
 
         let actual_representation = list.print(String::from(""));
         let expected_representation = indoc! {"
 
             1,4,6,23,77,84
             23,77,84
-            77"};
+            77\
+        "};
 
-        println!("AK: {}", actual_representation);
         assert_eq!(actual_representation, expected_representation);
     }
 }
