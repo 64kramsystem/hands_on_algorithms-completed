@@ -109,6 +109,32 @@ impl Node {
             }
         }
     }
+
+    pub fn decode(&self, input: &str) -> String {
+        let mut output = String::new();
+
+        let mut current_node = self;
+
+        for direction_bit in input.chars() {
+            current_node = match current_node {
+                Node::Tree(left, right) => match direction_bit {
+                    '0' => left.as_ref(),
+                    '1' => right.as_ref(),
+                    _ => panic!("Unexpected bit: {}", direction_bit),
+                },
+                Node::Leaf(_) => {
+                    panic!()
+                }
+            };
+
+            if let Node::Leaf(token) = current_node {
+                output.push(*token);
+                current_node = self;
+            }
+        }
+
+        output
+    }
 }
 
 #[cfg(test)]
@@ -163,5 +189,17 @@ mod tests {
         let expected_output = "00011100100001100010001101101011110100011";
 
         assert_eq!(actual_output, expected_output);
+    }
+
+    #[test]
+    fn test_decode_sequence() {
+        let decoded_sequence = "at an apple app";
+        let encoded_sequence = "00011100100001100010001101101011110100011";
+
+        let tree = Node::build_tree(decoded_sequence.clone());
+
+        let actual_decoded_sequence = tree.decode(encoded_sequence);
+
+        assert_eq!(actual_decoded_sequence, decoded_sequence);
     }
 }
