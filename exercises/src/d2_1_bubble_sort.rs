@@ -24,6 +24,7 @@ pub fn bubble_sort<T: PartialOrd>(collection: &mut [T]) {
 
 #[cfg(test)]
 mod tests {
+    use super::bubble_sort;
     use crate::test_sort;
 
     test_sort!(test_bubble_sort, collection, bubble_sort(&mut collection));

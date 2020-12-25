@@ -1,8 +1,6 @@
 #[macro_export]
 macro_rules! test_sort {
   ($test_name:ident, $collection:ident, $stat:stmt) => {
-      use super::*;
-
       #[test]
       fn $test_name() {
           let mut $collection = vec![

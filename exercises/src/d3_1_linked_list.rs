@@ -1,7 +1,7 @@
 // PartialOrd is for the exercise.
 // Copy is for the list values function.
 //
-struct LinkedList<T: PartialOrd + Copy>(Option<(T, Box<LinkedList<T>>)>);
+pub struct LinkedList<T: PartialOrd + Copy>(Option<(T, Box<LinkedList<T>>)>);
 
 impl<T: PartialOrd + Copy> LinkedList<T> {
     pub fn new() -> LinkedList<T> {
@@ -32,7 +32,7 @@ impl<T: PartialOrd + Copy> LinkedList<T> {
 
     // Exercise
     //
-    fn sorted_push_iterative(&mut self, value: T) {
+    pub fn sorted_push_iterative(&mut self, value: T) {
         let mut current = self;
 
         loop {
