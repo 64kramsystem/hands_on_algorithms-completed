@@ -3,7 +3,7 @@ use std::{cell::RefCell, rc::Rc, rc::Weak};
 type StrongNodeRef<T> = Rc<RefCell<Node<T>>>;
 type WeakNodeRef<T> = Weak<RefCell<Node<T>>>;
 
-struct LinkedList<T: Copy>(Option<(StrongNodeRef<T>, WeakNodeRef<T>)>);
+pub struct LinkedList<T: Copy>(Option<(StrongNodeRef<T>, WeakNodeRef<T>)>);
 
 struct Node<T: Copy> {
     value: T,
@@ -12,11 +12,11 @@ struct Node<T: Copy> {
 }
 
 impl<T: Copy> LinkedList<T> {
-    fn new() -> LinkedList<T> {
+    pub fn new() -> LinkedList<T> {
         LinkedList(None)
     }
 
-    fn push_front(&mut self, value: T) {
+    pub fn push_front(&mut self, value: T) {
         if let Some((ref mut current_front, ref mut current_back)) = self.0 {
             let node = Rc::new(RefCell::new(Node {
                 value,
@@ -43,7 +43,7 @@ impl<T: Copy> LinkedList<T> {
         }
     }
 
-    fn push_back(&mut self, value: T) {
+    pub fn push_back(&mut self, value: T) {
         if let Some((_, ref mut current_back_wk)) = self.0 {
             let node = Rc::new(RefCell::new(Node {
                 value,
@@ -69,7 +69,7 @@ impl<T: Copy> LinkedList<T> {
         }
     }
 
-    fn pop_front(&mut self) -> Option<T> {
+    pub fn pop_front(&mut self) -> Option<T> {
         if let Some((ref mut current_front_rc, ref mut current_back_wk)) = self.0 {
             let popped_value = current_front_rc.borrow().value;
 
@@ -88,7 +88,7 @@ impl<T: Copy> LinkedList<T> {
         }
     }
 
-    fn pop_back(&mut self) -> Option<T> {
+    pub fn pop_back(&mut self) -> Option<T> {
         if let Some((ref mut current_front_rc, ref mut current_back_wk)) = self.0 {
             let current_back_rc = Weak::upgrade(current_back_wk).unwrap();
             let popped_value = current_back_rc.borrow().value;
