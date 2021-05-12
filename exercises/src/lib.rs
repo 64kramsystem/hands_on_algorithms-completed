@@ -15,3 +15,4 @@ pub mod d3_5_skip_list;
 pub mod d3_6_skip_list_with_height;
 pub mod d3_7_huffman_coding;
 pub mod d4_1_graph_representations;
+pub mod d4_2_filling_the_graph;
