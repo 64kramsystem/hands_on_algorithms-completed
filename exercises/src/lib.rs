@@ -16,3 +16,5 @@ pub mod d3_6_skip_list_with_height;
 pub mod d3_7_huffman_coding;
 pub mod d4_1_graph_representations;
 pub mod d4_2_filling_the_graph;
+pub mod d5_2_hashmap_from_scratch;
+pub mod d5_3_bucket_list;
