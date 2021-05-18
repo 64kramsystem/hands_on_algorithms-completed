@@ -5,8 +5,8 @@ use std::{borrow::Borrow, hash::Hash};
 #[derive(Debug)]
 pub struct BucketList<K, V> {
     seed: u64,
-    len: usize,
-    buckets: Vec<Vec<(K, V)>>,
+    pub len: usize,
+    pub buckets: Vec<Vec<(K, V)>>,
 }
 
 impl<K: Hash + Eq, V> BucketList<K, V> {
@@ -59,7 +59,7 @@ impl<K: Hash + Eq, V> BucketList<K, V> {
         None
     }
 
-    pub fn set_bucket(&mut self, bucket_i: usize) -> Option<Vec<(K, V)>> {
+    pub fn remove_bucket_entries(&mut self, bucket_i: usize) -> Option<Vec<(K, V)>> {
         let ref_existing = self.buckets.get_mut(bucket_i)?;
         let mut result = vec![];
 
@@ -70,7 +70,7 @@ impl<K: Hash + Eq, V> BucketList<K, V> {
         Some(result)
     }
 
-    pub fn set_buckets(&mut self, num: usize) {
+    pub fn increase_buckets_num_to(&mut self, num: usize) {
         for _ in self.buckets.len()..num {
             self.buckets.push(vec![]);
         }
