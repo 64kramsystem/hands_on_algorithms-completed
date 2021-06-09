@@ -7,3 +7,4 @@ version = "0.1.0"
 [dependencies]
 indoc = "1.0.3"
 rand = "0.8.0"
+termion = "1.5.6"
