@@ -23,3 +23,4 @@ pub mod d6_39_id_generator;
 pub mod d6_40_data_store;
 pub mod d6_41_ecs_system;
 pub mod d7_44_blob_data_file;
+pub mod d7_45_convert_any_data_to_bytes;
