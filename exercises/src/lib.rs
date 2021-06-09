@@ -20,3 +20,4 @@ pub mod d5_2_hashmap_from_scratch;
 pub mod d5_3_bucket_list;
 pub mod d5_4_finishing_hashmap;
 pub mod d6_39_id_generator;
+pub mod d6_40_data_store;
