@@ -1,0 +1,28 @@
+use failure_derive::*;
+use std::io;
+
+#[derive(Fail, Debug)]
+pub enum BlobError {
+    #[fail(display = "No Room")]
+    NoRoom,
+    #[fail(display = "Too Big {}", 0)]
+    TooBig(u64),
+    #[fail(display = "Not Found")]
+    NotFound,
+    #[fail(display = "Bincode {}", 0)]
+    Bincode(bincode::Error),
+    #[fail(display = "IO {}", 0)]
+    IO(io::Error),
+}
+
+impl From<bincode::Error> for BlobError {
+    fn from(e: bincode::Error) -> Self {
+        Self::Bincode(e)
+    }
+}
+
+impl From<io::Error> for BlobError {
+    fn from(e: io::Error) -> Self {
+        Self::IO(e)
+    }
+}
