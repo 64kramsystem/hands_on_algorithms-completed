@@ -1,3 +1,4 @@
+#[derive(Clone, Copy, PartialEq)]
 pub struct GenData {
     pub pos: usize,
     pub gen: u64,
