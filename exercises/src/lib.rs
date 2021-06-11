@@ -24,3 +24,4 @@ pub mod d6_40_data_store;
 pub mod d6_41_ecs_system;
 pub mod d7_44_blob_data_file;
 pub mod d7_45_convert_any_data_to_bytes;
+pub mod d7_46_create_blob_store;
